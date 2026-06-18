@@ -4,8 +4,8 @@ import lightning as L
 
 import yaml
 
-from src.nets.transformer import LightningTransformer
-from src.data_module.dataset import LightningDataLoader
+from nets.transformer import LightningTransformer
+from data_module.dataset import LightningDataLoader
 
 def main():
      with open('train_config.yaml', 'r') as f:

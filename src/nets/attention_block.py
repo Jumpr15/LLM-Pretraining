@@ -1,8 +1,8 @@
 import torch.nn as nn
 import liger_kernel.transformers as liger
 
-from src.nets.attention_head import Attention_Head
-from src.nets.swiglu_mlp import SwiGLUMLP_Config
+from nets.attention_head import Attention_Head
+from nets.swiglu_mlp import SwiGLUMLP_Config
 
 class Block(nn.Module):
     def __init__(self, seq_len, embed_dims, head_size, num_heads):

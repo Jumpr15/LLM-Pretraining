@@ -7,7 +7,7 @@ from torchao.optim import AdamW8bit
 from transformers import get_cosine_schedule_with_warmup
 from huggingface_hub import PyTorchModelHubMixin
 
-from src.nets.attention_block import Block
+from nets.attention_block import Block
 
 class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
     def __init__(
