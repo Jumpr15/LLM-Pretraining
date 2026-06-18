@@ -1,32 +1,32 @@
 # hf 
 dataset_ckpt: 'roneneldan/TinyStories'
 tokenizer_ckpt: 'HuggingFaceTB/SmolLM-1.7B'
-save_ckpt: ~
+save_ckpt: '/local'
 pretrain_ckpt: ~
 
 # wandb + lightning callback
-run_id: ~
+run_id: 'tinystories_1'
 save_every_n_train_steps: 5000
 save_top_k: -1
-log_every_n_steps: 50
+log_every_n_steps: 10
 
 # lightning trainer parameters
-precision: 'bf16'
+precision: 'bf16-mixed'
 gradient_clip_val: 1.0
 devices: 1
 
 # training hyperparameters 
-batch_size: 8
-batch_acc: 4
-lr: 1e-3
+batch_size: 32
+batch_acc: 2
+lr: 3e-4
 iterations: 10000
 max_epochs: 1
-num_workers: 4
+num_workers: 8
 
 # model parameters
-seq_len: 1024
-embed_dims: 64
-head_size: 8
+seq_len: 256
+embed_dims: 256
+head_size: 32
 num_heads: 8
 block_num: 4
 vocab_size: 49152
