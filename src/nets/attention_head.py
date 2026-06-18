@@ -21,7 +21,7 @@ class Attention_Head(nn.Module):
           q = self.q_proj(logits).view(batch_size, seq_len, self.num_heads, self.head_size)
           k = self.k_proj(logits).view(batch_size, seq_len, self.num_heads, self.head_size)
 
-          q_pe, k_pe = self.RoPE.forward(q, k)
+          q_pe, k_pe = self.pe.forward(q, k)
 
           q_pe = q_pe.transpose(1, 2)
           k_pe = k_pe.transpose(1, 2)

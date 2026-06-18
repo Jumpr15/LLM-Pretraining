@@ -5,10 +5,10 @@ import lightning as L
 import yaml
 
 from llm_updated.src.nets.transformer import LightningTransformer
-from llm_updated.src.data_module.dataset import DataLoader
+from llm_updated.src.data_module.dataset import LightningDataLoader
 
 def main():
-     with open('config.yaml', 'r') as f:
+     with open('train_config.yaml', 'r') as f:
           config = yaml.safe_load(f)
           
           dataset_ckpt = config['dataset_ckpt']
@@ -28,8 +28,9 @@ def main():
           batch_size = config['batch_size']
           batch_acc = config['batch_acc']
           lr = config['lr']
-          iterations = config['lr']
+          iterations = config['iterations']
           max_epochs= config['max_epochs']
+          num_workers = config['num_workers']
           
           seq_len = config['seq_len']
           embed_dims = config['embed_dims']
@@ -58,10 +59,12 @@ def main():
      
      model = torch.compile(model)
      
-     dataloader = DataLoader(
+     dataloader = LightningDataLoader(
       dataset_ckpt,
       tokenizer_ckpt,
-      seq_len
+      batch_size,
+      seq_len,
+      num_workers
      )
 
      trainer = L.Trainer(

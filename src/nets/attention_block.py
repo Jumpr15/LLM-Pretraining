@@ -1,3 +1,4 @@
+import torch.nn as nn
 import liger_kernel.transformers as liger
 
 from llm_updated.src.nets.attention_head import Attention_Head

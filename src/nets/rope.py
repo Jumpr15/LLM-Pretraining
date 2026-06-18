@@ -1,11 +1,12 @@
 import torch
+import torch.nn as nn
 import liger_kernel.transformers as liger
 from transformers.models.llama.modeling_llama import (
     LlamaRotaryEmbedding,
     LlamaConfig
 )
 
-class RoPE():
+class RoPE(nn.Module):
   def __init__(self, seq_len, num_heads, head_size):
     config = LlamaConfig(
       hidden_size=num_heads * head_size, # Total dimension of the model's embeddings
@@ -17,7 +18,7 @@ class RoPE():
     
     self.rotary_emb = LlamaRotaryEmbedding(config)
 
-    self.pos_ids = torch.arange(seq_len, dtype=torch.long).unsqueeze(0)
+    self.register_buffer('pos_ids', torch.arange(seq_len, dtype=torch.long).unsqueeze(0))
 
   def forward(self, q, k):
     cos, sin = self.rotary_emb(k, self.pos_ids)

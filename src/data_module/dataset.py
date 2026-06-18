@@ -1,26 +1,51 @@
+import lightning as L
+
 from datasets import load_dataset
 from transformers import AutoTokenizer
 
-from torch.utils.data import Dataset, DataLoader
+import torch
+from torch.utils.data import IterableDataset, DataLoader
 
-class HFStreamingDataset(Dataset):
-  def __init__(self, dataset_ckpt, tokenizer_ckpt, batch_size) -> None:
+class HFStreamingDataset(IterableDataset):
+  def __init__(self, dataset_ckpt, tokenizer_ckpt, seq_len):
     super().__init__()
-    self.dataset = load_dataset(dataset_ckpt, split='train', streaming=True)
+    self.seq_len = seq_len
     self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_ckpt)
+    self.dataset = load_dataset(dataset_ckpt, split='train', streaming=True)
+
+  def __iter__(self):
+    for seq in self.dataset:
+      text_seq = seq['text']
+      enc = self.tokenizer(
+        text_seq,
+        max_length=self.seq_len + 1,
+        truncation=True,
+        return_tensors='pt'
+      )
+      enc_seq = enc['input_ids'].squeeze(0)
+      
+      if len(enc_seq) < 2:
+        continue
+      
+      yield enc_seq[:-1], enc_seq[1:]
+  
+class LightningDataLoader(L.LightningDataModule):
+  def __init__(self, tokenizer_ckpt, dataset_ckpt, batch_size, seq_len, num_workers):
+    super().__init__()
+    self.tokenizer_ckpt = tokenizer_ckpt
+    self.dataset_ckpt = dataset_ckpt
     self.batch_size = batch_size
-
-  def __len__(self):
-    return 99999999
-
-  def __getitem__(self, idx):
-    batch_seq = []
-
-    for i in range(self.batch_size):
-      text_seq = next(iter(self.dataset['text']))
-      enc_seq = self.tokenizer.encode(text_seq, return_tensors='pt')
-      batch_seq.append(enc_seq)
-
-    batch_seq = torch.cat(batch_seq, dim=0)
-    batch_seq = batch_seq.squeeze(dim=0)
-    return batch_seq
+    self.seq_len = seq_len
+    self.num_workers = num_workers
+    
+  def setup(self, stage=None):
+    self.train_dataset = HFStreamingDataset(self.tokenizer_ckpt, self.dataset_ckpt, self.seq_len)
+    
+  def train_dataloader(self):
+    return DataLoader(
+      self.train_dataset,
+      batch_size=self.batch_size,
+      num_workers=self.num_workers,
+      pin_memory=True
+    )
+  
