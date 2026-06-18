@@ -21,7 +21,7 @@ batch_acc: 2
 lr: 3e-4
 iterations: 10000
 max_epochs: 1
-num_workers: 8
+num_workers: 4
 
 # model parameters
 seq_len: 128

@@ -56,9 +56,7 @@ def main():
         lr=lr,
         iterations=iterations,
      )
-     
-     model = torch.compile(model)
-     
+
      dataloader = LightningDataLoader(
       dataset_ckpt,
       tokenizer_ckpt,
@@ -80,7 +78,10 @@ def main():
         strategy="auto",
         callbacks=[
             L.pytorch.callbacks.ModelCheckpoint(
-               dirpath=save_ckpt, every_n_train_steps=save_every_n_train_steps, save_top_k=save_top_k
+               dirpath=save_ckpt, 
+               every_n_train_steps=save_every_n_train_steps, 
+               save_top_k=save_top_k,
+               save_weights_only=True
             )
         ],
      )
