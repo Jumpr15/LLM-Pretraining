@@ -16,6 +16,7 @@ def main():
       tokenizer_ckpt = config['tokenizer_ckpt']
       save_ckpt = config['save_ckpt']
       pretrain_ckpt = config['pretrain_ckpt']
+      enable_liger_kernel = bool(config['enable_liger_kernel'])
       
       run_id = config['run_id']
       save_every_n_train_steps = int(config['save_every_n_train_steps'])
@@ -48,7 +49,7 @@ def main():
 
    # checks if CUDA available on device
    use_liger = False
-   if torch.cuda.is_available() and importlib.util.find_spec('liger-kernel'):
+   if torch.cuda.is_available() and importlib.util.find_spec('liger-kernel') and enable_liger_kernel:
       use_liger = True
 
    model = LightningTransformer(

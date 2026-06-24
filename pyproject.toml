@@ -10,7 +10,6 @@ dependencies = [
     "lightning>=2.6.5",
     "ruff>=0.15.19",
     "torch>=2.12.1",
-    "torchao>=0.17.0",
     "transformers>=5.12.1",
     "wandb>=0.27.2",
 ]

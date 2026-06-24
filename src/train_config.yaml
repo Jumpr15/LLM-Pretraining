@@ -4,6 +4,7 @@ tokenizer_ckpt: HuggingFaceTB/SmolLM-1.7B
 
 save_ckpt: model_ckpts
 pretrain_ckpt: ~
+enable_liger_kernel: true
 
 # wandb + lightning callback
 run_id: fineweb_edu_v1
