@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from nets.rope import RoPE
 
 class Attention_Head(nn.Module):
-    def __init__(self, seq_len, embed_dims, head_size, num_heads):
+    def __init__(self, seq_len, embed_dims, head_size, num_heads, use_liger):
         super().__init__()
         self.embed_dims = embed_dims
         self.num_heads = num_heads
@@ -15,7 +15,7 @@ class Attention_Head(nn.Module):
         self.k_proj = nn.Linear(embed_dims, self.total_heads)
         self.v_proj = nn.Linear(embed_dims, self.total_heads)
         self.o_proj = nn.Linear(self.total_heads, embed_dims)
-        self.pe = RoPE(seq_len, num_heads, head_size)
+        self.pe = RoPE(seq_len, num_heads, head_size, use_liger)
 
     def forward(self, logits, batch_size, seq_len):
           q = self.q_proj(logits).view(batch_size, seq_len, self.num_heads, self.head_size)

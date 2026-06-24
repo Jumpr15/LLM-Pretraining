@@ -1,11 +1,14 @@
 import torch
 import torch.nn as nn
 import lightning as L
-import liger_kernel.transformers as liger
+import importlib.util 
 
 from torchao.optim import AdamW8bit
 from transformers import get_cosine_schedule_with_warmup
 from huggingface_hub import PyTorchModelHubMixin
+
+if importlib.util.find_spec('liger-kernel'):
+    import liger_kernel.transformers as liger
 
 from nets.attention_block import Block
 
@@ -34,7 +37,7 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         self.vocab_size = vocab_size
         
         self.block_list = nn.ModuleList(
-            [Block(seq_len, embed_dims, head_size, num_heads) for _ in range(block_num)]
+            [Block(seq_len, embed_dims, head_size, num_heads, use_liger) for _ in range(block_num)]
         )
 
         self.lr = lr
@@ -57,7 +60,7 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         else: 
             self.softmax = nn.Softmax(dim=-1)
             self.cross_entropy = nn.CrossEntropyLoss()
-            self.rms_Norm_embed = nn.RMSNorm()
+            self.rms_Norm_embed = nn.RMSNorm(embed_dims)
         
     def _init_weights(self, module):
         if isinstance(module, nn.Linear):

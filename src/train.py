@@ -2,6 +2,7 @@ import torch
 from lightning.pytorch.loggers import WandbLogger
 import lightning as L
 
+import importlib.util
 import yaml
 
 from nets.transformer import LightningTransformer
@@ -47,7 +48,7 @@ def main():
 
    # checks if CUDA available on device
    use_liger = False
-   if torch.cuda.is_available():
+   if torch.cuda.is_available() and importlib.util.find_spec('liger-kernel'):
       use_liger = True
 
    model = LightningTransformer(
