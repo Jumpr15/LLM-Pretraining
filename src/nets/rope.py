@@ -29,5 +29,5 @@ class RoPE(nn.Module):
     if self.use_liger:
       tt_q, tt_k = liger.liger_rotary_pos_emb(q, k, cos, sin)
     else:
-      
+      tt_q, tt_k = self.rotary_emb.apply_rotary_pos_emb(q, k, cos, sin)
     return tt_q, tt_k
