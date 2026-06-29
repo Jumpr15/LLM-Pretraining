@@ -13,10 +13,10 @@ class SwiGLU(nn.Module):
     ):
         super().__init__()
 
-        self.proj_up = nn.Linear(embed_dims, embed_dims*exp_factor)
+        self.up_proj = nn.Linear(embed_dims, embed_dims*exp_factor)
         self.gate_proj = nn.Linear(embed_dims, embed_dims*exp_factor)
-        self.proj_down = nn.Linear(embed_dims*exp_factor, embed_dims)
+        self.down_proj = nn.Linear(embed_dims*exp_factor, embed_dims)
 
     def forward(self, x):
-        y = F.silu(self.gate_proj(x)) * self.proj_up(x)
-        return self.proj_down(y)
+        y = F.silu(self.gate_proj(x)) * self.up_proj(x)
+        return self.down_proj(y)
