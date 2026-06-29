@@ -1,5 +1,6 @@
 # hf 
 dataset_ckpt: HuggingFaceFW/fineweb-edu
+text_column: content
 stream_dataset: false
 tokenizer_ckpt: HuggingFaceTB/SmolLM-1.7B
 

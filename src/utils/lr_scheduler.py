@@ -2,6 +2,11 @@ from torch.optim.lr_scheduler import SequentialLR, LinearLR, ConstantLR, CosineA
 
 class WSD_Scheduler():
      def __init__(self, warmup_steps, iterations, optimizer, decay_ratio):
+          
+          self.warmup_steps = warmup_steps
+          self.iterations = iterations
+          self.decay_ratio = decay_ratio
+          
           warmup_scheduler = LinearLR(
                optimizer,
                start_factor=0.1,

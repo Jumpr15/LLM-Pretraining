@@ -17,6 +17,7 @@ def main():
       config = yaml.safe_load(f)
       
       dataset_ckpt = config['dataset_ckpt']
+      text_column = config['text_column']
       stream_dataset = bool(config['stream_dataset'])
       tokenizer_ckpt = config['tokenizer_ckpt']
       save_ckpt = config['save_ckpt']
@@ -81,9 +82,10 @@ def main():
    dataloader = LightningDataLoader(
       dataset,
       tokenizer,
+      text_column,
       batch_size,
       seq_len,
-      num_workers
+      num_workers,
    )
 
    trainer = L.Trainer(
