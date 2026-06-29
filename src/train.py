@@ -17,6 +17,7 @@ def main():
       config = yaml.safe_load(f)
       
       dataset_ckpt = config['dataset_ckpt']
+      dataset_split = config['dataset_split']
       text_column = config['text_column']
       stream_dataset = bool(config['stream_dataset'])
       tokenizer_ckpt = config['tokenizer_ckpt']
@@ -78,7 +79,7 @@ def main():
       tie_weights=tie_weights
    )
 
-   dataset = load_dataset(dataset_ckpt, split='train', streaming=stream_dataset)
+   dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)
    tokenizer = AutoTokenizer.from_pretrained(tokenizer_ckpt)
 
    dataloader = LightningDataLoader(

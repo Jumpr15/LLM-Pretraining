@@ -1,5 +1,6 @@
 # hf 
 dataset_ckpt: openbmb/Ultra-FineWeb
+dataset_split: en
 text_column: content
 stream_dataset: true
 tokenizer_ckpt: HuggingFaceTB/SmolLM-1.7B
