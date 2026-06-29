@@ -49,6 +49,7 @@ def main():
       head_size = int(config['head_size'])
       num_heads = int(config['num_heads'])
       block_num = int(config['block_num'])
+      tie_weights = bool(config['tie_weights'])
       vocab_size = int(config['vocab_size'])
           
    wandb_logger = WandbLogger(
@@ -73,7 +74,8 @@ def main():
       vocab_size=vocab_size,
       lr=lr,
       iterations=iterations,
-      use_liger=use_liger
+      use_liger=use_liger,
+      tie_weights=tie_weights
    )
 
    dataset = load_dataset(dataset_ckpt, split='train', streaming=stream_dataset)

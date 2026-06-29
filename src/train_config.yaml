@@ -1,7 +1,7 @@
 # hf 
-dataset_ckpt: HuggingFaceFW/fineweb-edu
+dataset_ckpt: openbmb/Ultra-FineWeb
 text_column: content
-stream_dataset: false
+stream_dataset: true
 tokenizer_ckpt: HuggingFaceTB/SmolLM-1.7B
 
 save_ckpt: model_ckpts
@@ -9,12 +9,12 @@ pretrain_ckpt: ~
 enable_liger_kernel: true
 
 hf_bucket_name: Jumpr/67
-hf_bucket_save_dir: colab_test/model_ckpts
+hf_bucket_save_dir: model_ckpts/data_ablations/ufineweb-0.5
 
 # wandb + lightning callback
-wandb_run_name: 
-wandb_run_project:
-save_every_n_train_steps: 250
+wandb_run_name: ufw-0.5
+wandb_run_project: ufw-quality-ablation-runs
+save_every_n_train_steps: 1000
 save_top_k: -1
 log_every_n_steps: 10
 
@@ -24,10 +24,10 @@ gradient_clip_val: 1.0
 devices: 1
 
 # training hyperparameters 
-batch_size: 128
+batch_size: 12
 batch_acc: 1
-lr: 3e-4
-iterations: 20000
+lr: 2.5e-4
+iterations: 50000
 max_epochs: 1
 num_workers: 4
 
@@ -37,4 +37,5 @@ embed_dims: 1024
 head_size: 64
 num_heads: 16
 block_num: 16
+tie_weights: true
 vocab_size: 49152
