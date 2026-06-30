@@ -7,13 +7,16 @@ from transformers import AutoTokenizer
 
 import importlib.util
 import yaml
+import click
 
 from nets.transformer import LightningTransformer
 from data_module.dataset import LightningDataLoader
 from utils.hf_upload import HFBucketRsync
 
-def main():
-   with open('train_config.yaml', 'r') as f:
+@click.command()
+@click.argument('train_config_file')
+def main(train_config_file):
+   with open(train_config_file, 'r') as f:
       config = yaml.safe_load(f)
       
       dataset_ckpt = config['dataset_ckpt']
@@ -124,5 +127,6 @@ def main():
       trainer.fit(model, datamodule=dataloader, ckpt_path=pretrain_ckpt) # doesnt work
    else: 
       trainer.fit(model, datamodule=dataloader)
+      
 if __name__ == '__main__':
      main()
