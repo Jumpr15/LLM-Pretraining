@@ -13,7 +13,7 @@ class RoPE(nn.Module):
   def __init__(self, seq_len, num_heads, head_size, use_liger, base=10000):
     super().__init__()
 
-    self.use_liger = True
+    self.use_liger = use_liger
 
     if self.use_liger:
       config = LlamaConfig(
