@@ -9,6 +9,7 @@ dependencies = [
     "datasets>=5.0.0",
     "huggingface-hub>=1.19.0",
     "lightning>=2.6.5",
+    "pytest>=9.1.1",
     "ruff>=0.15.19",
     "torch>=2.12.1",
     "transformers>=5.12.1",
