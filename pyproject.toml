@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "click>=8.4.2",
     "datasets>=5.0.0",
     "huggingface-hub>=1.19.0",
     "lightning>=2.6.5",
