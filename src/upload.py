@@ -58,7 +58,7 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
      # # this is only for save_model not safe_file
      model.model.load_state_dict(checkpoint['state_dict']) # Lightning ckpts save Weights as OrderedDicts => Convert into state_dict for safetensors loading compatibility
      
-     save_model(model.model, f"model.safetensors") # Save to dir as safetensors format
+     save_model(model.model, "model.safetensors") # Save to dir as safetensors format
      
      load_model(model.model, "model.safetensors") # Load new safetensors file over existing torch state_dict
      
