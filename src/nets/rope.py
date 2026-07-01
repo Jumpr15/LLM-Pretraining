@@ -39,8 +39,11 @@ class RoPE(nn.Module):
     idx_theta = seq_idx.unsqueeze(dim=1) @ theta.unsqueeze(dim=0)
     idx_theta2 = torch.cat([idx_theta, idx_theta], dim=1)
 
-    self.sin_cached = idx_theta2.sin()[None, None, :, :]
-    self.cos_cached = idx_theta2.cos()[None, None, :, :]
+    sin_cached = idx_theta2.sin()[None, None, :, :]
+    cos_cached = idx_theta2.cos()[None, None, :, :]
+    
+    self.register_buffer('sin_cached', sin_cached)
+    self.register_buffer('cos_cached', cos_cached)
 
   def get_neg(self, x):
     x_1 = x[:, :, :, self.dim//2:]
