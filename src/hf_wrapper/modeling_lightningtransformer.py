@@ -5,13 +5,15 @@ from .lightningtransformer import LightningTransformer
 
 class LightningTransformerModel(PreTrainedModel):
   config_class = LightningTransformerModelConfig
-  _tied_weights_keys = {
-    "model.embed_proj.weight": "model.token_embed.weight"
-  }
+  _tied_weights_keys = {}
 
   def __init__(self, config):
     super().__init__(config)
     self.model = LightningTransformer(**config.cfg)
+    if config.cfg.get('tie_weights', False):
+      self._tied_weights_keys = {
+        "model.embed_proj.weight": "model.token_embed.weight"
+      }
     self.post_init()
     
   # # hooks for input/output embedding layers => required for interpreting tied embeddings
