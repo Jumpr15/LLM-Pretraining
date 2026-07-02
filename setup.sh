@@ -8,7 +8,7 @@ sudo apt install -y tmux
 # Installs dependencies
 uv sync
 # Installs Liger Kernel (Only works with CUDA devices)
-uv add liger-kernel
+# uv add liger-kernel
 
 cd src
 mkdir model_ckpts
