@@ -153,6 +153,7 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         iterations,
         warmup_steps=2000,
         decay_ratio=0.1,
+        use_liger=False
     ):
         super().__init__()
         self.save_hyperparameters() # Logs hyperparameters to WandB
