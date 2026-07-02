@@ -84,8 +84,8 @@ def main(train_config_file):
    tokenizer = AutoTokenizer.from_pretrained(tokenizer_ckpt)
 
    dataloader = LightningDataLoader(
-      dataset,
       tokenizer,
+      dataset,
       text_column,
       batch_size,
       seq_len,
@@ -95,6 +95,7 @@ def main(train_config_file):
    trainer = L.Trainer(
       logger=wandb_logger,
       max_epochs=max_epochs,
+      max_steps=iterations // batch_acc,
       limit_train_batches=iterations,
       precision=precision,
       gradient_clip_val=gradient_clip_val,
