@@ -8,3 +8,4 @@ class LightningTransformerModelConfig(PretrainedConfig):
     self.num_hidden_layers = cfg["block_num"]
 
     super().__init__(**kwargs)
+

@@ -5,5 +5,6 @@ class LightningTransformerModelConfig(PretrainedConfig):
 
   def __init__(self, cfg=None, **kwargs):
     self.cfg = cfg
+    self.num_hidden_layers = cfg["block_num"]
 
     super().__init__(**kwargs)
