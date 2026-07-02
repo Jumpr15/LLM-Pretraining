@@ -14,9 +14,7 @@ from transformers.models.llama.modeling_llama import (
     LlamaConfig
 )
 
-import importlib.util 
-if importlib.util.find_spec('liger_kernel'):
-    import liger_kernel.transformers as liger
+import liger_kernel.transformers as liger
     
 class WSD_Scheduler():
      def __init__(self, warmup_steps, iterations, optimizer, decay_ratio):
@@ -62,80 +60,29 @@ class SwiGLUMLP_Config():
       self.intermediate_size = hidden_size*exp_factor
       self.hidden_act = hidden_act
 
-class SwiGLU(nn.Module):
-    def __init__(
-        self, 
-        embed_dims: int, 
-        exp_factor: int,
-    ):
-        super().__init__()
-
-        self.up_proj = nn.Linear(embed_dims, embed_dims*exp_factor)
-        self.gate_proj = nn.Linear(embed_dims, embed_dims*exp_factor)
-        self.down_proj = nn.Linear(embed_dims*exp_factor, embed_dims)
-
-    def forward(self, x):
-        y = F.silu(self.gate_proj(x)) * self.up_proj(x)
-        return self.down_proj(y)
-
 class RoPE(nn.Module):
-  def __init__(self, seq_len, num_heads, head_size, use_liger, base=10000):
+  def __init__(self, seq_len, num_heads, head_size, base=10000):
     super().__init__()
 
-    self.use_liger = use_liger
 
-    if self.use_liger:
-      config = LlamaConfig(
+    config = LlamaConfig(
         hidden_size=num_heads * head_size,
         num_attention_heads=num_heads,
         num_key_value_heads=num_heads,
         max_position_embeddings=seq_len,
         vocab_size=6767,
       )
-      self.rotary_emb = LlamaRotaryEmbedding(config)
-
-    else:
-      self.base = base
-      self.seq_len = seq_len
-      self.dim = head_size
-
-      self.build_cache()
-
-  def build_cache(self):
-    seq_idx = torch.arange(self.seq_len).float()
-    theta = self.base ** ((-2/self.dim)*(torch.arange(0, self.dim/2).float()))
-
-    idx_theta = seq_idx.unsqueeze(dim=1) @ theta.unsqueeze(dim=0)
-    idx_theta2 = torch.cat([idx_theta, idx_theta], dim=1)
-
-    sin_cached = idx_theta2.sin()[None, None, :, :]
-    cos_cached = idx_theta2.cos()[None, None, :, :]
-    
-    self.register_buffer('sin_cached', sin_cached)
-    self.register_buffer('cos_cached', cos_cached)
-
-  def get_neg(self, x):
-    x_1 = x[:, :, :, self.dim//2:]
-    x_2 = x[:, :, :, :self.dim//2]
-    x_neg = torch.cat([-x_1, x_2], dim=-1)
-    return x_neg
+    self.rotary_emb = LlamaRotaryEmbedding(config)
 
   def forward(self, q, k):
     batch_size, seq_len = q.shape[0], q.shape[2]
-    # position_ids must be (batch_size, seq_len)
-    if self.use_liger:
-      pos_ids = torch.arange(seq_len, dtype=torch.long, device=q.device).unsqueeze(0).expand(batch_size, -1)
-      cos, sin = self.rotary_emb(k, pos_ids)
-      q_rope, k_rope = liger.liger_rotary_pos_emb(q, k, cos, sin)
-    else:
-      cos_cached = self.cos_cached[:, :seq_len, :, :]
-      sin_cached = self.sin_cached[:, :seq_len, :, :]
-      q_rope = q * cos_cached + self.get_neg(q) * sin_cached
-      k_rope = k * cos_cached + self.get_neg(k) * sin_cached      
+    pos_ids = torch.arange(seq_len, dtype=torch.long, device=q.device).unsqueeze(0).expand(batch_size, -1)
+    cos, sin = self.rotary_emb(k, pos_ids)
+    q_rope, k_rope = liger.liger_rotary_pos_emb(q, k, cos, sin)     
     return q_rope, k_rope
 
 class Attention_Head(nn.Module):
-    def __init__(self, seq_len, embed_dims, head_size, num_heads, use_liger):
+    def __init__(self, seq_len, embed_dims, head_size, num_heads):
         super().__init__()
         self.embed_dims = embed_dims
         self.num_heads = num_heads
@@ -146,7 +93,7 @@ class Attention_Head(nn.Module):
         self.k_proj = nn.Linear(embed_dims, self.total_heads)
         self.v_proj = nn.Linear(embed_dims, self.total_heads)
         self.o_proj = nn.Linear(self.total_heads, embed_dims)
-        self.pe = RoPE(seq_len, num_heads, head_size, use_liger)
+        self.pe = RoPE(seq_len, num_heads, head_size)
 
     def forward(self, logits, batch_size, seq_len):
           q = self.q_proj(logits).view(batch_size, seq_len, self.num_heads, self.head_size)
@@ -172,25 +119,18 @@ class Attention_Head(nn.Module):
           return self.o_proj(out)
       
 class Block(nn.Module):
-    def __init__(self, seq_len, embed_dims, head_size, num_heads, use_liger, exp_factor=3):
+    def __init__(self, seq_len, embed_dims, head_size, num_heads, exp_factor=3):
         super().__init__()
         self.embed_dims = embed_dims
         self.head_size = head_size
 
-        if use_liger:
-            self.rms_Norm1 = liger.LigerRMSNorm(embed_dims)
-            self.rms_Norm2 = liger.LigerRMSNorm(embed_dims)
-            
-            config = SwiGLUMLP_Config(embed_dims, 'swish', exp_factor)
-            self.FFN = liger.LigerSwiGLUMLP(config)
+        self.rms_Norm1 = liger.LigerRMSNorm(embed_dims)
+        self.rms_Norm2 = liger.LigerRMSNorm(embed_dims)
         
-        else:
-            self.rms_Norm1 = nn.RMSNorm(embed_dims)
-            self.rms_Norm2 = nn.RMSNorm(embed_dims)
-            
-            self.FFN = SwiGLU(embed_dims, exp_factor)
+        config = SwiGLUMLP_Config(embed_dims, 'swish', exp_factor)
+        self.FFN = liger.LigerSwiGLUMLP(config)
 
-        self.Attention_Head = Attention_Head(seq_len, embed_dims, head_size, num_heads, use_liger)
+        self.Attention_Head = Attention_Head(seq_len, embed_dims, head_size, num_heads)
 
     def forward(self, logits, batch_size, seq_len):
         x = self.Attention_Head(self.rms_Norm1(logits), batch_size, seq_len)
@@ -213,7 +153,6 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         iterations,
         warmup_steps=2000,
         decay_ratio=0.1,
-        use_liger=False,
     ):
         super().__init__()
         self.save_hyperparameters() # Logs hyperparameters to WandB
@@ -225,7 +164,7 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         self.vocab_size = vocab_size
         
         self.block_list = nn.ModuleList(
-            [Block(seq_len, embed_dims, head_size, num_heads, use_liger) for _ in range(block_num)]
+            [Block(seq_len, embed_dims, head_size, num_heads) for _ in range(block_num)]
         )
 
         self.lr = lr
@@ -236,17 +175,9 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         self.token_embed = nn.Embedding(vocab_size, embed_dims)
         self.embed_proj = nn.Linear(embed_dims, vocab_size)
         
-        # use Liger kernel if CUDA is available and LigerKernel is installed
-        if use_liger: 
-            self.softmax = liger.LigerSoftmax()
-            self.cross_entropy = liger.LigerCrossEntropyLoss()
-            self.rms_Norm_embed = liger.LigerRMSNorm(embed_dims)
-           
-        # fallback to Pytorch and Transformers 
-        else: 
-            self.softmax = nn.Softmax(dim=-1)
-            self.cross_entropy = nn.CrossEntropyLoss()
-            self.rms_Norm_embed = nn.RMSNorm(embed_dims)
+        self.softmax = liger.LigerSoftmax()
+        self.cross_entropy = liger.LigerCrossEntropyLoss()
+        self.rms_Norm_embed = liger.LigerRMSNorm(embed_dims)
         
     def _init_weights(self, module):
         if isinstance(module, nn.Linear):

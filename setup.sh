@@ -12,3 +12,5 @@ uv add liger-kernel
 
 cd src
 mkdir model_ckpts
+
+tmux new -s model_train
