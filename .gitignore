@@ -14,3 +14,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# WandB and local model ckpts
+wandb/
+model_ckpts/
+
+*.safetensors

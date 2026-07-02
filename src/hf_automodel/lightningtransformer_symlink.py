@@ -1,3 +1,3 @@
 import os
 
-os.symlink('../nets/transformer.py', './hf_automodel/lightningtransformer.py')
+os.symlink('../transformer.py', 'lightningtransformer.py')

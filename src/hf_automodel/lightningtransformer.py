@@ -1,1 +1,1 @@
-../nets/transformer.py
+../transformer.py

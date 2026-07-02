@@ -45,7 +45,8 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
      LightningTransformerModelForCausalLM.register_for_auto_class("AutoModelForCausalLM")
      
      config = LightningTransformerModelConfig(model_config)
-     model = LightningTransformerModel(config)
+     automodel = LightningTransformerModel(config)
+     causalmodel = LightningTransformerModelForCausalLM(config)
      
      config.auto_map = {
           "AutoConfig": "configuration_lightningtransformer.LightningTransformerModelConfig",
@@ -56,15 +57,19 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
      checkpoint = torch.load(model_ckpt_path, weights_only=False)
 
      # this is only for save_model not safe_file
-     model.model.load_state_dict(checkpoint['state_dict']) # Lightning ckpts save Weights as OrderedDicts => Convert into state_dict for safetensors loading compatibility
+     automodel.model.load_state_dict(checkpoint['state_dict']) # Lightning ckpts save Weights as OrderedDicts => Convert into state_dict for safetensors loading compatibility
+     causalmodel.model.load_state_dict(checkpoint['state_dict'])
      
-     save_model(model.model, "model.safetensors") # Save to dir as safetensors format
+     save_model(automodel.model, "automodel.safetensors") # Save to dir as safetensors format
+     save_model(causalmodel.model, "causalmodel.safetensors")
      
-     load_model(model.model, "model.safetensors") # Load new safetensors file over existing torch state_dict
+     load_model(automodel.model, "automodel.safetensors") # Load new safetensors file over existing torch state_dict
+     load_model(causalmodel.model, "causalmodel.safetensors")
      
-     model.push_to_hub(hf_model_name)
+     automodel.push_to_hub(f'{hf_model_name}-AutoModel')
+     causalmodel.push_to_hub(f'{hf_model_name}-ForCausalLM')
 
 # needs path to ckpt and hf model name args
-# example usage uv run upload.py model_ckpts/epoch=0-step=5.ckpt HF_compatibility_test ci_config.yaml
+# example usage uv run upload.py model_ckpts/epoch=0-step=5.ckpt HF_compatibility_testv3 ci_config.yaml
 if __name__ == '__main__':
      main()

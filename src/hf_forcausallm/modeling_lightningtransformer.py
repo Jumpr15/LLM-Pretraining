@@ -9,6 +9,7 @@ class LightningTransformerModelForCausalLM(PreTrainedModel):
   def __init__(self, config):
     super().__init__(config)
     self.model = LightningTransformer(**config.cfg)
+    self.use_cache = False
     self.post_init()
     
   def forward(self, input_ids, **kwargs):

@@ -4,7 +4,10 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import SequentialLR, LinearLR, ConstantLR, CosineAnnealingLR
 from torch.optim import AdamW
 
-from huggingface_hub import PyTorchModelHubMixin, GenerationMixin
+from huggingface_hub import PyTorchModelHubMixin
+from transformers.generation import GenerationMixin
+from transformers.modeling_outputs import CausalLMOutput
+
 import lightning as L
 
 from transformers.models.llama.modeling_llama import (
@@ -291,7 +294,7 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin, GenerationMi
             loss_fn = self.cross_entropy(preds, target)
             return loss_fn
 
-        return unembed_out
+        return CausalLMOutput(logits=preds)
 
     def generate(self, input_tokens, max_tokens):
         for _ in range(max_tokens):
