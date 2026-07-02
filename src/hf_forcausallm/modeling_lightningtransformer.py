@@ -12,7 +12,6 @@ class LightningTransformerModelForCausalLM(PreTrainedModel, GenerationMixin):
     super().__init__(config)
     self.model = LightningTransformer(**config.cfg)
     self.use_cache = False
-    self.num_hidden_layers = config.cfg["block_num"]
     self.post_init()
     
   def forward(self, input_ids, **kwargs):
