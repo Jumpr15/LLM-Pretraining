@@ -14,7 +14,7 @@ from dataset import LightningDataLoader
 from utils.hf_upload import HFBucketRsync
 
 @click.command()
-@click.argument('configs/train_config_file')
+@click.argument('train_config_file')
 def main(train_config_file):
    with open(train_config_file, 'r') as f:
       config = yaml.safe_load(f)

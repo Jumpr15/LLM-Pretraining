@@ -43,5 +43,5 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         cd src
-        uv run upload.py model_ckpts/epoch=0-step=5.ckpt HF_compatibility_testv3 configs/ci_config.yaml
+        uv run upload.py model_ckpts/epoch=0-step=5.ckpt HF_model_ci_test configs/ci_config.yaml
         
