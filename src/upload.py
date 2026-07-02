@@ -6,6 +6,8 @@ from safetensors.torch import save_model, load_model
 from hf_automodel.configuration_lightningtransformer import LightningTransformerModelConfig
 from hf_automodel.modeling_lightningtransformer import LightningTransformerModel
 
+from hf_forcausallm.modeling_lightningtransformer import LightningTransformerModelForCausalLM
+
 @click.command()
 @click.argument("model_ckpt_path")
 @click.argument("hf_model_name")
@@ -40,9 +42,16 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
      
      LightningTransformerModelConfig.register_for_auto_class()
      LightningTransformerModel.register_for_auto_class("AutoModel")
+     LightningTransformerModelForCausalLM.register_for_auto_class("AutoModelForCausalLM")
      
      config = LightningTransformerModelConfig(model_config)
      model = LightningTransformerModel(config)
+     
+     config.auto_map = {
+          "AutoConfig": "configuration_lightningtransformer.LightningTransformerModelConfig",
+          "AutoModel": "modeling_lightningtransformer.LightningTransformerModel",
+          "AutoModelForCausalLM": "modeling_lightningtransformer.LightningTransformerModelForCausalLM"
+     }
      
      checkpoint = torch.load(model_ckpt_path, weights_only=False)
 

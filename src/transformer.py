@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch.optim.lr_scheduler import SequentialLR, LinearLR, ConstantLR, CosineAnnealingLR
 from torch.optim import AdamW
 
-from huggingface_hub import PyTorchModelHubMixin
+from huggingface_hub import PyTorchModelHubMixin, GenerationMixin
 import lightning as L
 
 from transformers.models.llama.modeling_llama import (
@@ -195,7 +195,7 @@ class Block(nn.Module):
         out = out + x
         return out
 
-class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
+class LightningTransformer(L.LightningModule, PyTorchModelHubMixin, GenerationMixin):
     def __init__(
         self,
         batch_size,

@@ -30,7 +30,7 @@ jobs:
         uv sync
     - name: Lint with Ruff
       run: |
-        uv run ruff check --output-format=github
+        uv run ruff check --output-format=github --no-cache
     # - name: Test with pytest
     #   run: |
     #     uv run pytest
