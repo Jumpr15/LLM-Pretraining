@@ -121,7 +121,7 @@ class RoPE(nn.Module):
     return x_neg
 
   def forward(self, q, k):
-    batch_size, seq_len = q.shape[0], q.shape[1]
+    batch_size, seq_len = q.shape[0], q.shape[2]
     # position_ids must be (batch_size, seq_len)
     if self.use_liger:
       pos_ids = torch.arange(seq_len, dtype=torch.long, device=q.device).unsqueeze(0).expand(batch_size, -1)
