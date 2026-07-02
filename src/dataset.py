@@ -3,7 +3,7 @@ import lightning as L
 from torch.utils.data import IterableDataset, DataLoader
 
 class HFStreamingDataset(IterableDataset):
-  def __init__(self, dataset, tokenizer, text_column, seq_len):
+  def __init__(self, tokenizer, dataset, text_column, seq_len):
     super().__init__()
     self.seq_len = seq_len
     self.tokenizer = tokenizer

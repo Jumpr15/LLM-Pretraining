@@ -26,7 +26,6 @@ def main(train_config_file):
       tokenizer_ckpt = config['tokenizer_ckpt']
       save_ckpt = config['save_ckpt']
       pretrain_ckpt = config['pretrain_ckpt']
-      enable_liger_kernel = bool(config['enable_liger_kernel'])
       
       hf_bucket_name=config['hf_bucket_name']
       hf_bucket_save_dir=config['hf_bucket_save_dir']
@@ -62,11 +61,6 @@ def main(train_config_file):
       name=wandb_run_name
    )
 
-   # checks if CUDA available on device
-   use_liger = False
-   if torch.cuda.is_available() and importlib.util.find_spec('liger_kernel') and enable_liger_kernel:
-      use_liger = True
-
    model = LightningTransformer(
       batch_size=batch_size,
       seq_len=seq_len,
@@ -76,8 +70,7 @@ def main(train_config_file):
       block_num=block_num,
       vocab_size=vocab_size,
       lr=lr,
-      iterations=iterations,
-      use_liger=use_liger,
+      iterations=iterations
    )
 
    dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)
