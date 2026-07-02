@@ -3,8 +3,8 @@ import click
 import yaml
 from safetensors.torch import save_model, load_model
 
-from hf_wrapper.configuration_lightningtransformer import LightningTransformerModelConfig
-from hf_wrapper.modeling_lightningtransformer import LightningTransformerModel
+from hf_automodel.configuration_lightningtransformer import LightningTransformerModelConfig
+from hf_automodel.modeling_lightningtransformer import LightningTransformerModel
 
 @click.command()
 @click.argument("model_ckpt_path")
@@ -24,7 +24,6 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
           lr = float(config['lr'])
           iterations = int(config['iterations'])
           enable_liger_kernel = bool(config['enable_liger_kernel'])
-          tie_weights = bool(config['tie_weights'])
      
      model_config = {
           "batch_size": batch_size,
@@ -37,7 +36,6 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
           "lr": lr,
           "iterations": iterations,
           "use_liger": enable_liger_kernel,
-          "tie_weights": tie_weights
      }
      
      LightningTransformerModelConfig.register_for_auto_class()
@@ -47,15 +45,8 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
      model = LightningTransformerModel(config)
      
      checkpoint = torch.load(model_ckpt_path, weights_only=False)
-     # if checkpoint['hyper_parameters']['tie_weights'] and torch.allclose(checkpoint['state_dict']['embed_proj.weight'], checkpoint['state_dict']['token_embed.weight']): # If tie_weights is enabled in model and token_embed + embed_proj are equal
-     #      print(list(checkpoint['state_dict']))
-     #      # print(checkpoint['state_dict']['token_embed'])
-     #      # print(checkpoint['state_dict']['embed_proj.weight'])
-     #      # checkpoint['state_dict']['embed_proj.weight'].copy_(checkpoint['state_dict']['token_embed.weight'])
-     #      # checkpoint['state_dict']['token_embed.weight'].copy_(checkpoint['state_dict']['embed_proj.weight'])
 
-     
-     # # this is only for save_model not safe_file
+     # this is only for save_model not safe_file
      model.model.load_state_dict(checkpoint['state_dict']) # Lightning ckpts save Weights as OrderedDicts => Convert into state_dict for safetensors loading compatibility
      
      save_model(model.model, "model.safetensors") # Save to dir as safetensors format

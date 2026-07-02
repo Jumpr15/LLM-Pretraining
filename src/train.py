@@ -9,8 +9,8 @@ import importlib.util
 import yaml
 import click
 
-from nets.transformer import LightningTransformer
-from data_module.dataset import LightningDataLoader
+from transformer import LightningTransformer
+from dataset import LightningDataLoader
 from utils.hf_upload import HFBucketRsync
 
 @click.command()
@@ -53,11 +53,10 @@ def main(train_config_file):
       head_size = int(config['head_size'])
       num_heads = int(config['num_heads'])
       block_num = int(config['block_num'])
-      tie_weights = bool(config['tie_weights'])
       vocab_size = int(config['vocab_size'])
           
    wandb_logger = WandbLogger(
-      log_model='false',
+      log_model=False,
       resume='allow',
       project=wandb_run_project,
       name=wandb_run_name
@@ -79,7 +78,6 @@ def main(train_config_file):
       lr=lr,
       iterations=iterations,
       use_liger=use_liger,
-      tie_weights=tie_weights
    )
 
    dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)

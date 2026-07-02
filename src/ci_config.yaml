@@ -38,5 +38,4 @@ embed_dims: 4 #1024
 head_size: 4 #64
 num_heads: 1 #16
 block_num: 1 #16
-tie_weights: true
 vocab_size: 49152
