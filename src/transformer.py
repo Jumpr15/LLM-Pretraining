@@ -5,7 +5,6 @@ from torch.optim.lr_scheduler import SequentialLR, LinearLR, ConstantLR, CosineA
 from torch.optim import AdamW
 
 from huggingface_hub import PyTorchModelHubMixin
-from transformers.generation import GenerationMixin
 from transformers.modeling_outputs import CausalLMOutput
 
 import lightning as L
@@ -198,7 +197,7 @@ class Block(nn.Module):
         out = out + x
         return out
 
-class LightningTransformer(L.LightningModule, PyTorchModelHubMixin, GenerationMixin):
+class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
     def __init__(
         self,
         batch_size,

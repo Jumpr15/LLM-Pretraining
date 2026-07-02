@@ -1,9 +1,11 @@
 from transformers import PreTrainedModel
+from transformers.generation import GenerationMixin
 
 from .configuration_lightningtransformer import LightningTransformerModelConfig
 from .lightningtransformer import LightningTransformer
 
-class LightningTransformerModelForCausalLM(PreTrainedModel):
+
+class LightningTransformerModelForCausalLM(PreTrainedModel, GenerationMixin):
   config_class = LightningTransformerModelConfig
 
   def __init__(self, config):
