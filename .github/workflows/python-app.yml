@@ -31,13 +31,17 @@ jobs:
     - name: Lint with Ruff
       run: |
         uv run ruff check --output-format=github --no-cache
-    # - name: Test with pytest
-    #   run: |
-    #     uv run pytest
     - name: Mini-Training Runthrough
       env: 
         WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         cd src
-        uv run train.py ci_config.yaml
+        uv run train.py configs/ci_config.yaml
+    - name: HF AutoModel and ForCausalLM Upload
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        cd src
+        uv run upload.py model_ckpts/epoch=0-step=5.ckpt HF_compatibility_testv3 configs/ci_config.yaml
+        
