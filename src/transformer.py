@@ -299,8 +299,8 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin, GenerationMi
     def generate(self, input_tokens, max_tokens):
         for _ in range(max_tokens):
             last_seq = input_tokens[:, -self.seq_len :]
-            logits = self(last_seq)
-            logits = logits[:, -1, :]
+            output = self(last_seq)
+            logits = output.logits[:, -1, :]
             probs = self.softmax(logits)
             next_tok = torch.multinomial(probs, num_samples=1)
             input_tokens = torch.cat((input_tokens, next_tok), dim=1)
