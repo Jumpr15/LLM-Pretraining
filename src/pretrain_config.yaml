@@ -15,9 +15,9 @@ hf_bucket_save_dir: model_ckpts/pretraining/run_v1/model_weights
 # wandb + lightning callback
 wandb_run_name: run_v1
 wandb_run_project: lightningmodel_pretraining
-save_every_n_train_steps: 500
+save_every_n_train_steps: 2500
 save_top_k: -1
-log_every_n_steps: 10
+log_every_n_steps: 5
 
 # lightning trainer parameters
 precision: bf16-true
@@ -25,15 +25,15 @@ gradient_clip_val: 1.0
 devices: 1
 
 # training hyperparameters 
-batch_size: 64 # could go to 100
+batch_size: 36 # could go to 100
 batch_acc: 4
 lr: 2.5e-4
-iterations: 70000
+iterations: 280000
 max_epochs: 1
 num_workers: 3 
 
 # model parameterds
-seq_len: 2048
+seq_len: 1024
 embed_dims: 1024
 head_size: 64
 num_heads: 16
