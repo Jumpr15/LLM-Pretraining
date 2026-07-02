@@ -128,8 +128,10 @@ class RoPE(nn.Module):
       cos, sin = self.rotary_emb(k, pos_ids)
       q_rope, k_rope = liger.liger_rotary_pos_emb(q, k, cos, sin)
     else:
-      q_rope = q * self.cos_cached + self.get_neg(q) * self.sin_cached
-      k_rope = k * self.cos_cached + self.get_neg(k) * self.sin_cached      
+      cos_cached = self.cos_cached[:, :seq_len, :, :]
+      sin_cached = self.sin_cached[:, :seq_len, :, :]
+      q_rope = q * cos_cached + self.get_neg(q) * sin_cached
+      k_rope = k * cos_cached + self.get_neg(k) * sin_cached      
     return q_rope, k_rope
 
 class Attention_Head(nn.Module):

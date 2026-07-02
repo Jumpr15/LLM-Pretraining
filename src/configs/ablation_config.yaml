@@ -7,13 +7,13 @@ tokenizer_ckpt: HuggingFaceTB/SmolLM-1.7B
 
 save_ckpt: model_ckpts
 pretrain_ckpt: ~
-enable_liger_kernel: true # true
+enable_liger_kernel: false # true
 
 hf_bucket_name: Jumpr/67
-hf_bucket_save_dir: model_ckpts/model_ablations/with_liger # model_ckpts/data_ablations/ufineweb-0.5
+hf_bucket_save_dir: model_ckpts/model_ablations/without_liger # model_ckpts/data_ablations/ufineweb-0.5
 
 # wandb + lightning callback
-wandb_run_name: with_liger 
+wandb_run_name: without_liger 
 wandb_run_project: with-liger-ablation-runs 
 save_every_n_train_steps: 1000
 save_top_k: -1
@@ -25,14 +25,14 @@ gradient_clip_val: 1.0
 devices: 1
 
 # training hyperparameters 
-batch_size: 24
-batch_acc: 4
+batch_size: 96 # could go to 100
+batch_acc: 2
 lr: 2.5e-4
 iterations: 2000
 max_epochs: 1
-num_workers: 1 #4
+num_workers: 3 #4
 
-# model parameters
+# model parameterds
 seq_len: 512
 embed_dims: 1024
 head_size: 64

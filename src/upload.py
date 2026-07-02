@@ -71,5 +71,6 @@ def main(model_ckpt_path, hf_model_name, upload_config_file):
 
 # needs path to ckpt and hf model name args
 # example usage uv run upload.py model_ckpts/epoch=0-step=5.ckpt HF_compatibility_testv3 configs/ci_config.yaml
+# example usage uv run upload.py model_ckpts/epoch=0-step=1000.ckpt liger-ablation-liger-enabled configs/ablation_config.yaml
 if __name__ == '__main__':
      main()
