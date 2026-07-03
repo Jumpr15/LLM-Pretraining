@@ -74,6 +74,9 @@ def main(train_config_file):
    )
 
    dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)
+   
+   dataset = dataset.skip(1800000)
+   
    tokenizer = AutoTokenizer.from_pretrained(tokenizer_ckpt)
 
    dataloader = LightningDataLoader(
