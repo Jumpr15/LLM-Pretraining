@@ -6,7 +6,7 @@ stream_dataset: true
 tokenizer_ckpt: HuggingFaceTB/SmolLM-1.7B
 
 save_ckpt: model_ckpts
-pretrain_ckpt: ~
+pretrain_ckpt: model_pretrain.ckpt
 enable_liger_kernel: true
 
 hf_bucket_name: Jumpr/67
@@ -30,7 +30,7 @@ batch_acc: 4
 lr: 2.5e-4
 iterations: 280000
 max_epochs: 1
-num_workers: 3 
+num_workers: 1
 
 # model parameterds
 seq_len: 1024

@@ -70,12 +70,11 @@ def main(train_config_file):
       block_num=block_num,
       vocab_size=vocab_size,
       lr=lr,
-      iterations=iterations
+      iterations=(iterations // batch_acc)
    )
 
    dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)
    
-   dataset = dataset.skip(1800000)
    
    tokenizer = AutoTokenizer.from_pretrained(tokenizer_ckpt)
 
