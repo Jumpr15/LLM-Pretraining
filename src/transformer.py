@@ -200,9 +200,15 @@ class LightningTransformer(L.LightningModule, PyTorchModelHubMixin):
         
         wsd_scheduler = WSD_Scheduler(self.warmup_steps, self.iterations, optimizer, self.decay_ratio)
         
+        cosine_decay_scheduler = CosineAnnealingLR(
+            optimizer, 
+            T_max=self.iterations
+        )
+        
         return {
             "optimizer": optimizer,
-            "lr_scheduler": {"scheduler": wsd_scheduler.get_scheduler(), "interval": "step"},
+            # "lr_scheduler": {"scheduler": wsd_scheduler.get_scheduler(), "interval": "step"},
+            "lr_scheduler": {"scheduler": cosine_decay_scheduler, "interval": "step"},
         }
 
     def training_step(self, batch, batch_idx):
