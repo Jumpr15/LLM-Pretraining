@@ -5,7 +5,8 @@ import lightning as L
 from datasets import load_dataset
 from transformers import AutoTokenizer
 
-import importlib.util
+from safetensors.torch import load_file
+
 import yaml
 import click
 
@@ -72,9 +73,10 @@ def main(train_config_file):
       lr=lr,
       iterations=(iterations // batch_acc)
    )
+   
+   model.load_state_dict(load_file("model.safetensors"))
 
    dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)
-   
    
    tokenizer = AutoTokenizer.from_pretrained(tokenizer_ckpt)
 
@@ -108,12 +110,12 @@ def main(train_config_file):
          L.pytorch.callbacks.LearningRateMonitor(
             logging_interval='step'
          ),
-         HFBucketRsync(
-            local_save_dir=save_ckpt,
-            bucket_name=hf_bucket_name,
-            bucket_save_dir=hf_bucket_save_dir,
-            every_n_train_steps=save_every_n_train_steps+1
-         )
+         # HFBucketRsync(
+         #    local_save_dir=save_ckpt,
+         #    bucket_name=hf_bucket_name,
+         #    bucket_save_dir=hf_bucket_save_dir,
+         #    every_n_train_steps=save_every_n_train_steps+1
+         # )
       ],
    )
     
