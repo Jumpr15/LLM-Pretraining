@@ -5,7 +5,7 @@ import lightning as L
 from datasets import load_dataset
 from transformers import AutoTokenizer
 
-from safetensors.torch import load_file
+from safetensors.torch import load_file, load_model
 
 import yaml
 import click
@@ -28,8 +28,8 @@ def main(train_config_file):
       save_ckpt = config['save_ckpt']
       pretrain_ckpt = config['pretrain_ckpt']
       
-      hf_bucket_name=config['hf_bucket_name']
-      hf_bucket_save_dir=config['hf_bucket_save_dir']
+      # hf_bucket_name=config['hf_bucket_name']
+      # hf_bucket_save_dir=config['hf_bucket_save_dir']
       
       wandb_run_name = config['wandb_run_name']
       wandb_run_project = config['wandb_run_project']
@@ -74,7 +74,8 @@ def main(train_config_file):
       iterations=(iterations // batch_acc)
    )
    
-   model.load_state_dict(load_file("model.safetensors"))
+   # model.load_state_dict(load_file("model.safetensors"))
+   # load_model(model, "./model.safetensors")
 
    dataset = load_dataset(dataset_ckpt, split=dataset_split, streaming=stream_dataset)
    
@@ -120,7 +121,7 @@ def main(train_config_file):
    )
     
    if pretrain_ckpt is not None: 
-      trainer.fit(model, datamodule=dataloader, ckpt_path=pretrain_ckpt) # doesnt work
+      trainer.fit(model, datamodule=dataloader, ckpt_path=pretrain_ckpt) 
    else: 
       trainer.fit(model, datamodule=dataloader)
       
