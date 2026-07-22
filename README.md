@@ -1,6 +1,29 @@
 ## LLM Pretraining Code 
 Pretraining code for Jumpr/Nuwa-v2-10k-steps-ForCausalLM
 
+### Usage 
+Requires CUDA/ROCm compatible device (liger kernel dep)
+
+Install dependencies and creates detachable tmux session to run training in
+```bash
+bash setup.sh
+```
+
+Runs training for a model based on preconfigured parameters in referenced yaml file
+```bash
+uv run train.py pretrain_config.yaml
+```
+
+Uploads model weights as safetensors to HF model (Have HF_TOKEN env var exported first)
+```bash
+uv run upload.py <path_to_checkpoint> <hf_model_name> pretrain_config.yaml
+```
+
+### Issues
+- HF_Rsync to bucket callback causes processor memory problems, so must manually upload ckpts
+- No fallback for non-Cuda/Rocm devices
+- No stateful dataloader (If using sequential dataset processing, restarting training even on .ckpts causes dataset to restart from beginning)
+- Better to Use UFW-10B Sample Dataset how dataset shuffling (CerebellumKing/Ultra-FineWeb-10B)
 
 ### Model Architecture
 - Used Fused Ops with Liger Kernel
@@ -10,7 +33,6 @@ Pretraining code for Jumpr/Nuwa-v2-10k-steps-ForCausalLM
 - Untied Embeddings
 - Tokenizer is SmolLM-1.7B (ckpt: HuggingFaceTB/SmolLM-1.7B)
 
-| | |
 |---|---|
 | Parameters | ~483M |
 | Layers | 28 |
@@ -24,14 +46,13 @@ Pretraining code for Jumpr/Nuwa-v2-10k-steps-ForCausalLM
 | Precision | Full bf-16 |
 | Batch Size | 32 in warmup and stable => 36 in decay |
 | Batch Acc | 4 |
-
-- WSD Scheduler (2k Warmup steps w/ Linearly increasing LR, Constant Max LR, Cosine Decay LR for final 0.1*Total steps)
-- AdamW w/ default hyperparameters 
+| Optimizer | AdamW w/ default hyperparameters  |
+| LR Scheduler | WSD Scheduler (2k Warmup steps w/ Linearly increasing LR, Constant Max LR, Cosine Decay LR for final 10% of Total steps) |
 
 ### Dataset 
 - Used Dataset with streaming => Sequential Dataset Sampling 
-- UltraFineWeb during warmup and stable phase
-- UltraFineWeb-L3-Multi-Style-Synthetic during decay phase
+- UltraFineWeb during warmup and stable phase (openbmb/Ultra-FineWeb split: en)
+- UltraFineWeb-L3-Multi-Style-Synthetic during decay phase (openbmb/Ultra-FineWeb-L3 subset: Ultra-Fine-Web-L3-en-Multi-Style-Synthetic)
 
 ### Training Stack
 - Pytorch 
