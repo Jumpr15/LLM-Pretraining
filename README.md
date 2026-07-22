@@ -35,6 +35,7 @@ uv run upload.py <path_to_checkpoint> <hf_model_name> pretrain_config.yaml
 - Untied Embeddings
 - Tokenizer is SmolLM-1.7B (ckpt: HuggingFaceTB/SmolLM-1.7B)
 
+| | |
 |---|---|
 | Parameters | ~483M |
 | Layers | 28 |
