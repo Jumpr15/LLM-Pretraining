@@ -25,7 +25,7 @@ uv run upload.py <path_to_checkpoint> <hf_model_name> pretrain_config.yaml
 - HF_Rsync to bucket callback causes processor memory problems, so must manually upload ckpts
 - No fallback for non-Cuda/Rocm devices
 - No stateful dataloader (If using sequential dataset processing, restarting training even on .ckpts causes dataset to restart from beginning)
-- Better to Use UFW-10B Sample Dataset how dataset shuffling (CerebellumKing/Ultra-FineWeb-10B)
+- Better to Use UFW-10B Sample Dataset for dataset shuffling (CerebellumKing/Ultra-FineWeb-10B)
 
 ### Model Architecture
 - Used Fused Ops with Liger Kernel
