@@ -2,7 +2,9 @@
 Pretraining code for Jumpr/Nuwa-v2-10k-steps-ForCausalLM
 
 ### Usage 
-Requires CUDA/ROCm compatible device (liger kernel dep)
+- Requires CUDA/ROCm compatible device (liger kernel dep)
+- Uses Tmux for detachable and persistent sessions (model_train session created in setup.sh)
+- Requires HF and WandB accounts w/ API Keys
 
 Install dependencies and creates detachable tmux session to run training in
 ```bash
